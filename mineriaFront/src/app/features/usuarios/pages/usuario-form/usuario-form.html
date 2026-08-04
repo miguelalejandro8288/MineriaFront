@@ -1,1 +1,66 @@
-<p>usuario-form works!</p>
+<div class="page-container">
+  <mat-card class="form-card">
+    <h2>{{ titulo }}</h2>
+
+    <div class="loading-container" *ngIf="loading">
+      <mat-spinner diameter="42"></mat-spinner>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" *ngIf="!loading">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" />
+        <mat-error *ngIf="form.get('nombre')?.hasError('required')">
+          El nombre es obligatorio
+        </mat-error>
+        <mat-error *ngIf="form.get('nombre')?.hasError('maxlength')">
+          Máximo 100 caracteres
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Correo</mat-label>
+        <input matInput type="email" formControlName="correo" />
+        <mat-error *ngIf="form.get('correo')?.hasError('required')">
+          El correo es obligatorio
+        </mat-error>
+        <mat-error *ngIf="form.get('correo')?.hasError('email')">
+          Ingrese un correo válido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="contrasena" />
+        <mat-hint *ngIf="editando">Déjela vacía si no desea cambiar la contraseña</mat-hint>
+        <mat-error *ngIf="!editando && form.get('contrasena')?.hasError('required')">
+          La contraseña es obligatoria
+        </mat-error>
+        <mat-error *ngIf="form.get('contrasena')?.hasError('minlength')">
+          La contraseña debe tener al menos 6 caracteres
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="rol">
+          <mat-option value="ADMIN">ADMIN</mat-option>
+          <mat-option value="USER">USER</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('rol')?.hasError('required')">
+          El rol es obligatorio
+        </mat-error>
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+          {{ editando ? 'Actualizar' : 'Guardar' }}
+        </button>
+
+        <button mat-stroked-button color="accent" type="button" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
