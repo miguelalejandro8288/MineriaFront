@@ -4,15 +4,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { UsuarioService } from '../../services/usuario.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UsuarioService } from '../../services/usuario';
+import { NotificationService } from '../../../../core/services/notification';
 
 @Component({
   selector: 'app-usuario-form',
@@ -27,10 +26,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatSelectModule,
     MatProgressSpinnerModule
   ],
-  templateUrl: './usuario-form.component.html',
-  styleUrl: './usuario-form.component.css'
+  templateUrl: './usuario-form.html',
+  styleUrl: './usuario-form.css'
 })
-export class UsuarioFormComponent implements OnInit {
+export class UsuarioForm  implements OnInit  {
   private fb = inject(FormBuilder);
   private usuarioService = inject(UsuarioService);
   private notificationService = inject(NotificationService);

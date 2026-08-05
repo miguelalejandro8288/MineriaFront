@@ -1,26 +1,25 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { UsuarioService } from '../../services/usuario';
-import { NotificationService } from '../../../../core/services/notification';
-import { Router } from '@angular/router';
-import { Usuario } from '../../models/usuario.model';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { QueryFilter } from '../../../../core/models/query-filter.model';
-import { MetaData } from '../../../../core/models/metadata.model';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-
-
-import { MatTableModule } from '@angular/material/table';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { AnalisisLaboratorioService } from '../../services/analisis-laboratorio';
+import { NotificationService } from '../../../../core/services/notification';
+import { Router } from 'express';
+import { AnalisisLaboratorio } from '../../models/AnalisisLaboratorio.model';
+import { QueryFilter } from '../../../../core/models/query-filter.model';
+import { MetaData } from '../../../../core/models/metadata.model';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-usuario-list',
-  imports: [CommonModule,
+  selector: 'app-analisis-laboratorio-list',
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatCardModule,
     MatTableModule,
@@ -30,22 +29,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatPaginatorModule,
     MatProgressSpinnerModule
 ],
-  templateUrl: './usuario-list.html',
-  styleUrl: './usuario-list.css',
+  templateUrl: './analisis-laboratorio-list.html',
+  styleUrl: './analisis-laboratorio-list.css',
 })
-export class UsuarioList implements OnInit {
-  private usuarioService = inject(UsuarioService);
+export class AnalisisLaboratorioList implements OnInit {
+
+  private analisisService = inject(AnalisisLaboratorioService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
 
-  usuarios: Usuario[] = [];
- displayedColumns: string[] = [
-  'id',
-  'nombre',
-  'correo',
-  'rol',
-  'acciones'
-];loading = false;
+  analisis: AnalisisLaboratorio[] = [];
+  displayedColumns: string[] = ['id', 'leyOro', 'leyPlata', 'leyCobre', 'impurezas', 'estadoAnalisis', 'certificadoPdfUrl','idUsuarioLaboratio', 'acciones'];
+  loading = false;
 
   buscarControl = new FormControl('', { nonNullable: true });
 
@@ -82,15 +77,15 @@ export class UsuarioList implements OnInit {
   cargarUsuarios(): void {
     this.loading = true;
 
-    this.usuarioService.getAll(this.filter)
+    this.analisisService.getAll(this.filter)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
-          this.usuarios = response.data;
+          this.analisis = response.data;
           this.meta = response.meta;
         },
         error: () => {
-          this.notificationService.error('No se pudo cargar la lista de usuarios.');
+          this.notificationService.error('No se pudo cargar la lista de analisis.');
         }
       });
   }
@@ -102,15 +97,15 @@ export class UsuarioList implements OnInit {
   }
 
   nuevo(): void {
-    this.router.navigate(['/usuarios/nuevo']);
+    this.router.navigate(['/analisis/nuevo']);
   }
 
   editar(id: number): void {
-    this.router.navigate(['/usuarios/editar', id]);
+    this.router.navigate(['/analisis/editar', id]);
   }
 
   eliminar(id: number): void {
-    const confirmado = confirm('¿Está seguro de eliminar este usuario?');
+    const confirmado = confirm('¿Está seguro de eliminar este analisis?');
 
     if (!confirmado) {
       return;
@@ -118,21 +113,23 @@ export class UsuarioList implements OnInit {
 
     this.loading = true;
 
-    this.usuarioService.delete(id)
+    this.analisisService.delete(id)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: () => {
-          this.notificationService.success('Usuario eliminado correctamente.');
+          this.notificationService.success('Análisis eliminado correctamente.');
 
-          if (this.usuarios.length === 1 && this.filter.pageNumber > 1) {
+          if (this.analisis.length === 1 && this.filter.pageNumber > 1) {
             this.filter.pageNumber--;
           }
 
           this.cargarUsuarios();
         },
         error: () => {
-          this.notificationService.error('No se pudo eliminar el usuario.');
+          this.notificationService.error('No se pudo eliminar el analisis.');
         }
       });
   }
 }
+
+

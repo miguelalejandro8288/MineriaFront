@@ -15,14 +15,17 @@ export class UsuarioService {
     private http = inject(HttpClient  );
   private apiUrl = `${environment.apiUrl}/Usuario`;
 
-  getAll(filter: QueryFilter): Observable<ApiResponse<Usuario[]>> {
-    const params = new HttpParams()
-      .set('PageNumber', filter.pageNumber)
-      .set('PageSize', filter.pageSize)
-      .set('Buscar', filter.buscar || '');
+ getAll(filter: QueryFilter): Observable<ApiResponse<Usuario[]>> {
+  const params = new HttpParams()
+    .set('PageNumber', filter.pageNumber)
+    .set('PageSize', filter.pageSize)
+    .set('Buscar', filter.buscar ?? "");
 
-    return this.http.get<ApiResponse<Usuario[]>>(this.apiUrl, { params });
-  }
+ return this.http.get<ApiResponse<Usuario[]>>(
+  `${this.apiUrl}/filtrar`,
+  { params }
+);
+}
 
   getById(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
